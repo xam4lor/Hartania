@@ -16,12 +16,12 @@ public class MainClass extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new Events(this), this);
-		this.log.info(this.getPluginName() + "Plugin launched");
+		this.log.info(this.getServerName() + "Plugin launched");
 	}
 
 	@Override
 	public void onDisable() {
-		this.log.info(this.getPluginName() + "Plugin stopped");
+		this.log.info(this.getServerName() + "Plugin stopped");
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) { //on teste les commandes
@@ -33,7 +33,7 @@ public class MainClass extends JavaPlugin {
 		return true;
 	}
 	
-	private String getPluginName() {
-		return "[Hartania-Plugin] ";
+	public String getServerName() {
+		return "[Hartania] ";
 	}
 }
