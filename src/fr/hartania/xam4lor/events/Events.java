@@ -57,15 +57,11 @@ public class Events implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent ev) {
 		if (ev.getInventory().getName().equals("- Menu -")) {
-			if(ev.getCurrentItem().getItemMeta().getDisplayName().equals("- SPAWN -")) {
+			if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "- SPAWN -")) {
 				Location l = ev.getWhoClicked().getWorld().getSpawnLocation().add(0, 1, 0);
 				ev.getWhoClicked().teleport(l);
 				ev.getWhoClicked().closeInventory();
 			}
-			else {
-				this.log.info(ev.getCurrentItem().getItemMeta().getDisplayName());
-			}
-			
 			ev.setCancelled(true);
 		}
 	}
