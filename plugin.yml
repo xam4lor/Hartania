@@ -1,0 +1,8 @@
+name: Hartania-Plugin
+author: xam4lor
+version: 1.0
+main: fr.hartania.xam4lor.main.MainClass
+commands:
+   ht:
+      description: HartaniaPlugin
+      usage: /ht <subcommand>
