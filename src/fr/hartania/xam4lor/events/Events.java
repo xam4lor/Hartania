@@ -15,6 +15,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.connection.SetParameters;
+import fr.hartania.xam4lor.games.icebow.Coordonates;
 import fr.hartania.xam4lor.main.MainClass;
 import fr.hartania.xam4lor.menus.BoussoleGui;
 
@@ -60,6 +61,10 @@ public class Events implements Listener {
 			if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "- SPAWN -")) {
 				Location l = ev.getWhoClicked().getWorld().getSpawnLocation().add(0, 1, 0);
 				ev.getWhoClicked().teleport(l);
+				ev.getWhoClicked().closeInventory();
+			}
+			else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
+				ev.getWhoClicked().teleport(Coordonates.getCoordonates(0));
 				ev.getWhoClicked().closeInventory();
 			}
 			ev.setCancelled(true);

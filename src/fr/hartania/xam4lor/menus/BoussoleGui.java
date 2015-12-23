@@ -34,6 +34,19 @@ public class BoussoleGui {
 			}
 		}
 		
+		ItemStack game1 = new ItemStack(Material.BOW, 1);
+		ItemMeta game1_meta = game1.getItemMeta();
+		game1_meta.setDisplayName(ChatColor.BLUE + "- ICE BOW -");
+		game1.setItemMeta(game1_meta);
+		
+		iv.setItem(13, game1);
+		
+		for(int i = 9; i != 18; i++) {
+			if(i != 13) {
+				iv.setItem(i, glass);
+			}
+		}
+		
 		return iv;
 	}
 }
