@@ -3,7 +3,6 @@ package fr.hartania.xam4lor.events;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -15,7 +14,8 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.connection.SetParameters;
-import fr.hartania.xam4lor.games.icebow.Coordonates;
+import fr.hartania.xam4lor.locations.IceBowLocations;
+import fr.hartania.xam4lor.locations.MainLocations;
 import fr.hartania.xam4lor.main.MainClass;
 import fr.hartania.xam4lor.menus.BoussoleGui;
 
@@ -59,12 +59,11 @@ public class Events implements Listener {
 	public void onInventoryClick(InventoryClickEvent ev) {
 		if (ev.getInventory().getName().equals("- Menu -")) {
 			if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "- SPAWN -")) {
-				Location l = ev.getWhoClicked().getWorld().getSpawnLocation().add(0, 1, 0);
-				ev.getWhoClicked().teleport(l);
+				ev.getWhoClicked().teleport(MainLocations.spawn);
 				ev.getWhoClicked().closeInventory();
 			}
 			else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
-				ev.getWhoClicked().teleport(Coordonates.getCoordonates(0));
+				ev.getWhoClicked().teleport(IceBowLocations.waiting_room);
 				ev.getWhoClicked().closeInventory();
 			}
 			ev.setCancelled(true);
