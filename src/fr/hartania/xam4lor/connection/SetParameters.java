@@ -1,9 +1,9 @@
 package fr.hartania.xam4lor.connection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import fr.hartania.xam4lor.locations.MainLocations;
 
 public class SetParameters {
 	public SetParameters(Player p) {
@@ -12,6 +12,6 @@ public class SetParameters {
 		p.setFoodLevel(21);
 		p.setExhaustion(5F);
 		
-		p.getPlayer().teleport(MainLocations.spawn);
+		p.getPlayer().teleport(new Location(Bukkit.getServer().getWorld("world"), -794, 5, -280));
 	}
 }

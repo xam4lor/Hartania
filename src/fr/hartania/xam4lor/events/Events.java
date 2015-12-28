@@ -2,7 +2,9 @@ package fr.hartania.xam4lor.events;
 
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -10,12 +12,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.connection.SetParameters;
-import fr.hartania.xam4lor.locations.IceBowLocations;
-import fr.hartania.xam4lor.locations.MainLocations;
 import fr.hartania.xam4lor.main.MainClass;
 import fr.hartania.xam4lor.menus.BoussoleGui;
 
@@ -42,6 +43,12 @@ public class Events implements Listener {
 	}
 	
 	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent ev) {
+		new GiveCustomInventory(ev.getPlayer());
+		new SetParameters(ev.getPlayer());
+	}
+	
+	@EventHandler
 	public void onBlockBreakEvent(final BlockBreakEvent ev) {
 		if(!ev.getPlayer().isOp()) {
 			ev.setCancelled(true);
@@ -58,15 +65,16 @@ public class Events implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent ev) {
 		if (ev.getInventory().getName().equals("- Menu -")) {
+			ev.setCancelled(true);
+			
 			if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "- SPAWN -")) {
-				ev.getWhoClicked().teleport(MainLocations.spawn);
+				ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorld("world"), -794, 5, -280));
 				ev.getWhoClicked().closeInventory();
 			}
 			else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
-				ev.getWhoClicked().teleport(IceBowLocations.waiting_room);
+				ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorld("world"), -803, 10, -199));
 				ev.getWhoClicked().closeInventory();
 			}
-			ev.setCancelled(true);
 		}
 	}
 	
