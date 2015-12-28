@@ -64,17 +64,22 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent ev) {
-		if (ev.getInventory().getName().equals("- Menu -")) {
-			ev.setCancelled(true);
-			
-			if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "- SPAWN -")) {
-				ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorld("world"), -794, 5, -280));
-				ev.getWhoClicked().closeInventory();
+		try {
+			if (ev.getInventory().getName().equals("- Menu -")) {
+				ev.setCancelled(true);
+				
+				if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "- SPAWN -")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -794, 5, -280));
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -803, 10, -199));
+					ev.getWhoClicked().closeInventory();
+				}
 			}
-			else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
-				ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorld("world"), -803, 10, -199));
-				ev.getWhoClicked().closeInventory();
-			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

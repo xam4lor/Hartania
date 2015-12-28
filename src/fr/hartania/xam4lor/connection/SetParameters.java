@@ -12,6 +12,6 @@ public class SetParameters {
 		p.setFoodLevel(21);
 		p.setExhaustion(5F);
 		
-		p.getPlayer().teleport(new Location(Bukkit.getServer().getWorld("world"), -794, 5, -280));
+		p.getPlayer().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -794, 5, -280));
 	}
 }

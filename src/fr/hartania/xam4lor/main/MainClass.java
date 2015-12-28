@@ -20,6 +20,7 @@ public class MainClass extends JavaPlugin {
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new Events(this), this);
 		this.log.info(this.getServerName() + "Plugin launched");
+		this.log.info(this.getServerName() + "If this is not the correct default world, please contact the developper. World: " + Bukkit.getServer().getWorlds().get(0));
 	}
 
 	@Override
