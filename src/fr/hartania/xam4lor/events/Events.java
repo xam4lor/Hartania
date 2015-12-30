@@ -44,8 +44,8 @@ public class Events implements Listener {
 		ev.getPlayer().sendMessage(ChatColor.RED + m.getServerName() + ChatColor.GREEN + "Visite notre site WEB : " + ChatColor.BLUE + "http://xam4lor.890m.com");
 		new GiveCustomInventory(ev.getPlayer());
 		new SetParameters(ev.getPlayer());
-		ev.getPlayer().getWorld().getBlockAt(-863, 4, -259).setType(Material.AIR);
-		ev.getPlayer().getWorld().getBlockAt(-863, 4, -259).setType(Material.REDSTONE_BLOCK);
+		ev.getPlayer().getWorld().getBlockAt(-866, 5, -261).setType(Material.AIR);
+		ev.getPlayer().getWorld().getBlockAt(-866, 5, -261).setType(Material.REDSTONE_BLOCK);
 	}
 	
 	@EventHandler
