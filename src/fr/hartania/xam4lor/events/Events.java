@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -22,6 +23,7 @@ import fr.hartania.xam4lor.connection.SetParameters;
 import fr.hartania.xam4lor.games.TestCoordonates;
 import fr.hartania.xam4lor.main.MainClass;
 import fr.hartania.xam4lor.menus.BoussoleGui;
+import fr.hartania.xam4lor.menus.CommandBlockGui;
 
 public class Events implements Listener {
 	public Logger log = Logger.getLogger("Minecraft");
@@ -40,6 +42,9 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent ev) {
+		if(ev.getPlayer().isOp()) {
+			ev.getPlayer().setGameMode(GameMode.CREATIVE);
+		}
 		ev.setJoinMessage(ChatColor.RED + m.getServerName() + ChatColor.GREEN + "Bienvenu(e) à " + ev.getPlayer().getName() + " sur " + ChatColor.UNDERLINE + "Hartania" + ChatColor.RESET + ChatColor.GREEN + " !!");
 		ev.getPlayer().sendMessage(ChatColor.RED + m.getServerName() + ChatColor.GREEN + "Visite notre site WEB : " + ChatColor.BLUE + "http://xam4lor.890m.com");
 		new GiveCustomInventory(ev.getPlayer());
@@ -71,6 +76,9 @@ public class Events implements Listener {
 		if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getBoussole())) {
 			new BoussoleGui(ev.getPlayer());
 		}
+		else if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getCommandBlock())) {
+			new CommandBlockGui(ev.getPlayer());
+		}
 	}
 	
 	@EventHandler
@@ -85,6 +93,23 @@ public class Events implements Listener {
 				}
 				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
 					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -803, 10, -199));
+					ev.getWhoClicked().closeInventory();
+				}
+			}
+			
+			if (ev.getInventory().getName().equals("- Op Tools -")) {
+				ev.setCancelled(true);
+				
+				if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GREEN + "SURVIE")) {
+					ev.getWhoClicked().setGameMode(GameMode.SURVIVAL);
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GREEN + "CREATIF")) {
+					ev.getWhoClicked().setGameMode(GameMode.CREATIVE);
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GREEN + "SPECTATEUR")) {
+					ev.getWhoClicked().setGameMode(GameMode.SPECTATOR);
 					ev.getWhoClicked().closeInventory();
 				}
 			}

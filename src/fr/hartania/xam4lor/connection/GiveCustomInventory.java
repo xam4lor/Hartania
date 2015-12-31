@@ -7,14 +7,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class GiveCustomInventory {
-	@SuppressWarnings("unused")
-	private static ItemStack boussole;
-	
 	public GiveCustomInventory(Player p) {
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 		
 		this.giveBoussole(p);
+		
+		if(p.isOp()) {
+			this.giveOpTool(p);
+		}
 	}
 
 	private void giveBoussole(Player p) {
@@ -36,5 +37,26 @@ public class GiveCustomInventory {
 		boussole.setItemMeta(boussole_meta);
 		
 		return boussole;
+	}
+	
+	private void giveOpTool(Player p) {
+		ItemStack command_block = new ItemStack(Material.COMMAND, 1, (byte) 0);
+		ItemMeta command_block_meta = command_block.getItemMeta();
+		
+		command_block_meta.setDisplayName(ChatColor.BLUE + "- Op Tools -");
+		
+		command_block.setItemMeta(command_block_meta);
+		p.getInventory().addItem(command_block);
+	}
+	
+	public static ItemStack getCommandBlock() {
+		ItemStack command_block = new ItemStack(Material.COMMAND, 1, (byte) 0);
+		ItemMeta command_block_meta = command_block.getItemMeta();
+		
+		command_block_meta.setDisplayName(ChatColor.BLUE + "- Op Tools -");
+		
+		command_block.setItemMeta(command_block_meta);
+		
+		return command_block;
 	}
 }
