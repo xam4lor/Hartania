@@ -22,8 +22,8 @@ import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.connection.SetParameters;
 import fr.hartania.xam4lor.games.TestCoordonates;
 import fr.hartania.xam4lor.main.MainClass;
-import fr.hartania.xam4lor.menus.BoussoleGui;
-import fr.hartania.xam4lor.menus.CommandBlockGui;
+import fr.hartania.xam4lor.menus.DiamondGui;
+import fr.hartania.xam4lor.menus.EmeraldGui;
 
 public class Events implements Listener {
 	public Logger log = Logger.getLogger("Minecraft");
@@ -74,10 +74,10 @@ public class Events implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent ev) {
 		if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getBoussole())) {
-			new BoussoleGui(ev.getPlayer());
+			new EmeraldGui(ev.getPlayer());
 		}
 		else if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getCommandBlock())) {
-			new CommandBlockGui(ev.getPlayer());
+			new DiamondGui(ev.getPlayer());
 		}
 	}
 	

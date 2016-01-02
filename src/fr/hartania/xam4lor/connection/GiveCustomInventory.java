@@ -19,7 +19,7 @@ public class GiveCustomInventory {
 	}
 
 	private void giveBoussole(Player p) {
-		ItemStack boussole = new ItemStack(Material.COMPASS, 1, (byte) 0);
+		ItemStack boussole = new ItemStack(Material.EMERALD, 1, (byte) 0);
 		ItemMeta boussole_meta = boussole.getItemMeta();
 		
 		boussole_meta.setDisplayName(ChatColor.BLUE + "- Menu -");
@@ -29,7 +29,7 @@ public class GiveCustomInventory {
 	}
 
 	public static ItemStack getBoussole() {
-		ItemStack boussole = new ItemStack(Material.COMPASS, 1, (byte) 0);
+		ItemStack boussole = new ItemStack(Material.EMERALD, 1, (byte) 0);
 		ItemMeta boussole_meta = boussole.getItemMeta();
 		
 		boussole_meta.setDisplayName(ChatColor.BLUE + "- Menu -");
@@ -40,23 +40,23 @@ public class GiveCustomInventory {
 	}
 	
 	private void giveOpTool(Player p) {
-		ItemStack command_block = new ItemStack(Material.COMMAND, 1, (byte) 0);
-		ItemMeta command_block_meta = command_block.getItemMeta();
+		ItemStack emerald = new ItemStack(Material.DIAMOND, 1, (byte) 0);
+		ItemMeta emerald_meta = emerald.getItemMeta();
 		
-		command_block_meta.setDisplayName(ChatColor.BLUE + "- Op Tools -");
+		emerald_meta.setDisplayName(ChatColor.BLUE + "- Op Tools -");
 		
-		command_block.setItemMeta(command_block_meta);
-		p.getInventory().addItem(command_block);
+		emerald.setItemMeta(emerald_meta);
+		p.getInventory().addItem(emerald);
 	}
 	
 	public static ItemStack getCommandBlock() {
-		ItemStack command_block = new ItemStack(Material.COMMAND, 1, (byte) 0);
-		ItemMeta command_block_meta = command_block.getItemMeta();
+		ItemStack emerald = new ItemStack(Material.DIAMOND, 1, (byte) 0);
+		ItemMeta emerald_meta = emerald.getItemMeta();
 		
-		command_block_meta.setDisplayName(ChatColor.BLUE + "- Op Tools -");
+		emerald_meta.setDisplayName(ChatColor.BLUE + "- Op Tools -");
 		
-		command_block.setItemMeta(command_block_meta);
+		emerald.setItemMeta(emerald_meta);
 		
-		return command_block;
+		return emerald;
 	}
 }
