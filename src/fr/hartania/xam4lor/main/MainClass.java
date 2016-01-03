@@ -38,12 +38,15 @@ public class MainClass extends JavaPlugin {
     			if (!pl.isOp()) {
     				pl.sendMessage(ChatColor.RED + getServerName() + "Vous n'êtes pas un opérateur !");
     			}
-    			else if (args.length == 0) {
+    			else if(args.length == 0) {
     				pl.sendMessage(ChatColor.RED + getCommandHtSyntaxe());
     			}
     			
     			else if(args[0].equalsIgnoreCase("giveItems")) {
     				new GiveCustomInventory(pl);
+    			}
+    			else {
+    				pl.sendMessage(ChatColor.RED + getCommandHtSyntaxe());
     			}
             }
         }

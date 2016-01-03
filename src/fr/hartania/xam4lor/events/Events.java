@@ -91,8 +91,27 @@ public class Events implements Listener {
 					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -794, 5, -280));
 					ev.getWhoClicked().closeInventory();
 				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- MUSEE ARMORSTAND -")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -832, 5, -172));
+					ev.getWhoClicked().closeInventory();
+				}
 				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
 					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -803, 10, -199));
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- PVP ARENA -")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -812, 5, -384));
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- BOW SHOT -")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -857, 6, -210));
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- JUMP -")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -871, 35, 235));
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- SKYWARS -")) {
 					ev.getWhoClicked().closeInventory();
 				}
 			}

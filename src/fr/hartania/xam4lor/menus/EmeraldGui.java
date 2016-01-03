@@ -66,13 +66,13 @@ public class EmeraldGui {
 		
 		ItemStack skywars = new ItemStack(Material.FEATHER, 1);
 		ItemMeta skywars_meta = skywars.getItemMeta();
-		skywars_meta.setDisplayName(ChatColor.BLUE + "- SkyWars -");
+		skywars_meta.setDisplayName(ChatColor.BLUE + "- SKYWARS -");
 		skywars.setItemMeta(skywars_meta);
 		
 		iv.setItem(24, skywars);
 		//-------------------------------
 		
-		for(int i = 0; i != 36; i++) {
+		for(int i = 0; i != 54; i++) {
 			if(i != 4 && i != 11 && i != 13 && i != 15 && i != 20 && i != 22 && i != 24) {
 				iv.setItem(i, glass);
 			}
