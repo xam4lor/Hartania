@@ -6,3 +6,6 @@ commands:
    ht:
       description: HartaniaPlugin
       usage: /ht <subcommand>
+   fly:
+      description: CommandeFly
+      usage: /fly <subcommand>

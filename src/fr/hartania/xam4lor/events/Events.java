@@ -28,7 +28,7 @@ import fr.hartania.xam4lor.menus.EmeraldGui;
 public class Events implements Listener {
 	public Logger log = Logger.getLogger("Minecraft");
 	MainClass m = null;
-
+	
 	public Events(MainClass m) {
 		this.m = m;
 	}
@@ -45,10 +45,12 @@ public class Events implements Listener {
 		if(ev.getPlayer().isOp()) {
 			ev.getPlayer().setGameMode(GameMode.CREATIVE);
 		}
-		ev.setJoinMessage(ChatColor.RED + m.getServerName() + ChatColor.GREEN + "Bienvenu(e) à " + ev.getPlayer().getName() + " sur " + ChatColor.UNDERLINE + "Hartania" + ChatColor.RESET + ChatColor.GREEN + " !!");
-		ev.getPlayer().sendMessage(ChatColor.RED + m.getServerName() + ChatColor.GREEN + "Visite notre site WEB : " + ChatColor.BLUE + "http://xam4lor.890m.com");
-		new GiveCustomInventory(ev.getPlayer());
+		ev.setJoinMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Bienvenu(e) à " + ev.getPlayer().getName() + " sur " + ChatColor.UNDERLINE + "Hartania" + ChatColor.RESET + ChatColor.GREEN + " !!");
+		ev.getPlayer().sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Visite notre site WEB : " + ChatColor.BLUE + "http://xam4lor.890m.com");
+		
 		new SetParameters(ev.getPlayer());
+		new GiveCustomInventory(ev.getPlayer());
+		
 		ev.getPlayer().getWorld().getBlockAt(-866, 5, -261).setType(Material.AIR);
 		ev.getPlayer().getWorld().getBlockAt(-866, 5, -261).setType(Material.REDSTONE_BLOCK);
 	}
@@ -60,8 +62,8 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent ev) {
-		new GiveCustomInventory(ev.getPlayer());
 		new SetParameters(ev.getPlayer());
+		new GiveCustomInventory(ev.getPlayer());
 	}
 	
 	@EventHandler
@@ -108,7 +110,7 @@ public class Events implements Listener {
 					ev.getWhoClicked().closeInventory();
 				}
 				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- JUMP -")) {
-					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -871, 35, 235));
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -871, 35, 253));
 					ev.getWhoClicked().closeInventory();
 				}
 				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- SKYWARS -")) {

@@ -8,9 +8,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class GiveCustomInventory {
 	public GiveCustomInventory(Player p) {
-		p.getInventory().clear();
-		p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-		
 		this.giveBoussole(p);
 		
 		if(p.isOp()) {
