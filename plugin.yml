@@ -18,3 +18,9 @@ commands:
    grade:
       description: Commande pour modifier les grades des joueurs
       usage: /grade <pseudo> <modo/admin/joueur>
+   global:
+      description: Commande pour faire un message global (comme venant du serveur)
+      usage: /global <message>
+   actus:
+      description: Commande pour afficher les mises à jour et modifications pour se tenir à jour
+      usage: /actus

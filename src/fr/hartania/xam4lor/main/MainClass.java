@@ -15,6 +15,7 @@ import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.events.Events;
 import fr.hartania.xam4lor.fly.FlySysteme;
 import fr.hartania.xam4lor.grades.SetGrade;
+import fr.hartania.xam4lor.infos.SayServerInfos;
 import fr.hartania.xam4lor.pubMessage.RandomPubMessage;
 
 public class MainClass extends JavaPlugin {
@@ -192,6 +193,60 @@ public class MainClass extends JavaPlugin {
 			}
 		}
 		
+		//commande global
+		else if(cmd.getName().equalsIgnoreCase("global")) {
+			String message = "";
+			boolean boucle_value = true;
+			int i = 1;
+			
+			if(sender.isOp()) {
+				try {
+					if(args.length != 0) {
+						message = message + args[0];
+						
+						while(boucle_value) {
+							try {
+								message = message + " " + args[i];
+							}
+							catch(Exception e) {
+								boucle_value = false;
+							}
+							
+							i++;
+						}
+						
+						Bukkit.getServer().broadcastMessage(ChatColor.RED + MainClass.getServerName2() + ChatColor.GREEN + message);
+					}
+					else {
+						sender.sendMessage(ChatColor.RED + getCommandGlobalSyntaxe());
+					}
+				}
+				catch(Exception e) {
+					sender.sendMessage(ChatColor.RED + getCommandGlobalSyntaxe());
+				}
+			}
+			else {
+				sender.sendMessage(ChatColor.RED + getServerName() + "Vous n'êtes pas un opérateur !");
+			}
+		}
+		
+		//actualités
+		else if(cmd.getName().equalsIgnoreCase("actus")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				if(pl.isOp()) {
+					new SayServerInfos(pl);
+				}
+				else {
+					sender.sendMessage(ChatColor.RED + MainClass.getServerName() + "Vous n'êtes pas un opérateur.");
+				}
+			}
+			else {
+				sender.sendMessage(MainClass.getServerName() + "Il faut être un joueur.");
+			}
+		}
+		
 		return true;
 	}
 	
@@ -203,11 +258,15 @@ public class MainClass extends JavaPlugin {
 			public void run() {
 				new RandomPubMessage();
 			}
-		}, 0L, 6000L); //tous les 20 ticks (1200 tick = 1 min)
+		}, 0L, 6000L); //tous les 6000 ticks (1200 tick = 1 min)
 	}
 
 	private String getCommandFlySyntaxe() {
 		return "Syntaxe : /fly <1/0/on/off>";
+	}
+	
+	private String getCommandGlobalSyntaxe() {
+		return "Syntaxe : /global <message>";
 	}
 
 	private String getCommandGradeSyntaxe() {
@@ -228,5 +287,9 @@ public class MainClass extends JavaPlugin {
 
 	public static String getServerName() {
 		return "[Hartania] ";
+	}
+	
+	public static String getServerName2() {
+		return "[Hartania Global-Message] ";
 	}
 }
