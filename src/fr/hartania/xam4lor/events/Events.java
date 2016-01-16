@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -19,6 +20,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.connection.SetParameters;
+import fr.hartania.xam4lor.grades.GradeSystem;
 import fr.hartania.xam4lor.main.MainClass;
 import fr.hartania.xam4lor.menus.DiamondGui;
 import fr.hartania.xam4lor.menus.EmeraldGui;
@@ -43,7 +45,7 @@ public class Events implements Listener {
 		if(ev.getPlayer().isOp()) {
 			ev.getPlayer().setGameMode(GameMode.CREATIVE);
 		}
-		ev.setJoinMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Bienvenu(e) à " + ev.getPlayer().getName() + " sur " + ChatColor.UNDERLINE + "Hartania" + ChatColor.RESET + ChatColor.GREEN + " !!");
+		ev.setJoinMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Bienvenu(e) à " + ev.getPlayer().getDisplayName() + " sur " + ChatColor.UNDERLINE + "Hartania" + ChatColor.RESET + ChatColor.GREEN + " !!");
 		ev.getPlayer().sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Visite notre site WEB : " + ChatColor.BLUE + "http://xam4lor.890m.com");
 		
 		new SetParameters(ev.getPlayer());
@@ -51,6 +53,8 @@ public class Events implements Listener {
 		
 		ev.getPlayer().getWorld().getBlockAt(-866, 5, -261).setType(Material.AIR);
 		ev.getPlayer().getWorld().getBlockAt(-866, 5, -261).setType(Material.REDSTONE_BLOCK);
+		
+		ev.getPlayer().setDisplayName(GradeSystem.getGradeColor(GradeSystem.getGrade(ev.getPlayer())) + "[" + GradeSystem.getGrade(ev.getPlayer()) + "] " + ev.getPlayer().getDisplayName() + ChatColor.RESET);
 	}
 	
 	@EventHandler
@@ -63,6 +67,17 @@ public class Events implements Listener {
 	public void onBlockBreakEvent(final BlockBreakEvent ev) {
 		if(!ev.getPlayer().isOp()) {
 			ev.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent ev) {
+		try {
+			ev.getEntity().getPlayer().sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Vous êtes mort.");
+			ev.setDeathMessage("");
+		}
+		catch(Exception e) {
+			this.log.warning(MainClass.getServerName() + "Erreur lors de l'évènement 'PlayerDeathEvent'");
 		}
 	}
 	
@@ -90,7 +105,7 @@ public class Events implements Listener {
 					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -832, 5, -172));
 					ev.getWhoClicked().closeInventory();
 				}
-				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE BOW -")) {
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- ICE SHOT -")) {
 					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -803, 10, -199));
 					ev.getWhoClicked().closeInventory();
 				}

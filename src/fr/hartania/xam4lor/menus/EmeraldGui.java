@@ -30,7 +30,7 @@ public class EmeraldGui {
 		
 		ItemStack game1 = new ItemStack(Material.BOW, 1);
 		ItemMeta game1_meta = game1.getItemMeta();
-		game1_meta.setDisplayName(ChatColor.BLUE + "- ICE BOW -");
+		game1_meta.setDisplayName(ChatColor.BLUE + "- ICE SHOT -");
 		game1.setItemMeta(game1_meta);
 		
 		iv.setItem(13, game1);

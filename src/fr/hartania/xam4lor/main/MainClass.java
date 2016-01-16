@@ -9,10 +9,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.events.Events;
 import fr.hartania.xam4lor.fly.FlySysteme;
+import fr.hartania.xam4lor.grades.SetGrade;
+import fr.hartania.xam4lor.pubMessage.RandomPubMessage;
 
 public class MainClass extends JavaPlugin {
 	
@@ -23,6 +26,7 @@ public class MainClass extends JavaPlugin {
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new Events(this), this);
 		this.log.info(MainClass.getServerName() + "If this is not the correct default world, please contact the developper. World: " + Bukkit.getServer().getWorlds().get(0));
+		SetPubMessage();
 		
 		this.log.info(MainClass.getServerName() + "Plugin launched");
 	}
@@ -59,7 +63,7 @@ public class MainClass extends JavaPlugin {
 					try {
 						if(args[1] != null) {
 							new GiveCustomInventory(Bukkit.getPlayer(args[1]));
-							sender.sendMessage("Les items ont bien été givés à " + Bukkit.getPlayer(args[1]).getCustomName() + ".");
+							sender.sendMessage("Les items ont bien été givés à " + Bukkit.getPlayer(args[1]).getDisplayName() + ".");
 						}
 						else {
 							sender.sendMessage(getCommandHtGiveItemsSyntaxe());
@@ -108,8 +112,47 @@ public class MainClass extends JavaPlugin {
 			}
 		}
 		
+		//commande grade
+		else if(cmd.getName().equalsIgnoreCase("grade")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				try {
+					if(args.length == 0) {
+						pl.sendMessage(ChatColor.RED + getCommandGradeSyntaxe());
+					}
+	    			else if (!pl.isOp()) {
+	    				pl.sendMessage(ChatColor.RED + getServerName() + "Vous n'êtes pas un opérateur !");
+	    			}
+	    			else {
+	    				boolean gradeCorrect = false;
+	    				String[] grades = {"modo","admin","joueur"};
+	    				
+	    				for(int i = 0; i != grades.length; i++) {
+	    					if(grades[i].equals(args[1])) {
+	    						gradeCorrect = true;
+	    					}
+	    				}
+	    				
+	    				if(gradeCorrect) {
+	    					new SetGrade(args[0], args[1], pl);
+	    				}
+	    				else {
+	    					pl.sendMessage(ChatColor.RED + getServerName() + "Ce grade n'existe pas. Liste des grades : 'modo', 'admin', 'joueur'.");
+	    				}
+	    			}
+				}
+				catch(Exception e) {
+					pl.sendMessage(ChatColor.RED + getCommandGradeSyntaxe());
+				}
+			}
+			else {
+				sender.sendMessage("Il faut être un joueur.");
+			}
+		}
+		
 		//messages privés
-		else if(cmd.getName().equalsIgnoreCase("msg")) {
+		else if(cmd.getName().equalsIgnoreCase("msg") || cmd.getName().equalsIgnoreCase("m")) {
 			if(sender instanceof Player) {
 				Player pl = ((Player) sender).getPlayer();
 				Player player_choose;
@@ -149,34 +192,30 @@ public class MainClass extends JavaPlugin {
 			}
 		}
 		
-		else if(cmd.getName().equalsIgnoreCase("msg-begin")) {
-			/*
-			if(sender instanceof Player) {
-				Player pl = ((Player) sender).getPlayer();
-				
-				if(args.length == 0) {
-					pl.sendMessage(ChatColor.RED + getCommandMsgBeginSyntaxe());
-				}
-    			else {
-    				ConversationSystem.convBegin(pl, Bukkit.getPlayer(args[0]));
-    			}
-			}*/
-		}
-		
 		return true;
 	}
 	
-	@SuppressWarnings("unused")
-	private String getCommandMsgBeginSyntaxe() {
-		return "Syntaxe : /msg-begin <pseudo>";
+	public void SetPubMessage() {
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		
+		scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
+			@Override
+			public void run() {
+				new RandomPubMessage();
+			}
+		}, 0L, 6000L); //tous les 20 ticks (1200 tick = 1 min)
 	}
 
 	private String getCommandFlySyntaxe() {
 		return "Syntaxe : /fly <1/0/on/off>";
 	}
+
+	private String getCommandGradeSyntaxe() {
+		return "Syntaxe : /grade <pseudo> <modo/admin/joueur>";
+	}
 	
 	private String getCommandMsgSyntaxe() {
-		return "Syntaxe : /msg <pseudo> <message>";
+		return "Syntaxe : /msg <pseudo> <message> ou /m <pseudo> <message>";
 	}
 
 	private String getCommandHtGiveItemsSyntaxe() {

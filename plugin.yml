@@ -4,11 +4,17 @@ version: 1.0
 main: fr.hartania.xam4lor.main.MainClass
 commands:
    ht:
-      description: HartaniaPlugin
-      usage: /ht <subcommand>
+      description: Commande du plugin hartania de base
+      usage: /ht <giveItems>
    fly:
-      description: CommandeFly
-      usage: /fly <subcommand>
+      description: Commande pour voler
+      usage: /fly <1/0/on/off>
    msg:
-      description: EnvoyerDesMessagesPv
+      description: Commande pour envoyer des messages privés
       usage: /msg <pseudo> <message>
+   m:
+      description: Commande pour envoyer des messages privés
+      usage: /m <pseudo> <message>
+   grade:
+      description: Commande pour modifier les grades des joueurs
+      usage: /grade <pseudo> <modo/admin/joueur>
