@@ -9,9 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.events.Events;
@@ -21,18 +18,11 @@ public class MainClass extends JavaPlugin {
 	
 	public Logger log = Logger.getLogger("Minecraft");
 	public static World main_world = Bukkit.getServer().getWorld("world");
-	private Scoreboard sb = null;
 	
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new Events(this), this);
 		this.log.info(MainClass.getServerName() + "If this is not the correct default world, please contact the developper. World: " + Bukkit.getServer().getWorlds().get(0));
-		
-		sb = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
-		Objective player_connect = sb.registerNewObjective("ConnectionNumber", "dummy");
-		player_connect.setDisplayName("Nombre de connections");
-		player_connect.setDisplaySlot(DisplaySlot.SIDEBAR);
-		player_connect.getScore(ChatColor.RED + "xam4lor").setScore(0);
 		
 		this.log.info(MainClass.getServerName() + "Plugin launched");
 	}
@@ -87,7 +77,7 @@ public class MainClass extends JavaPlugin {
         }
 		
 		//commande fly
-		if(cmd.getName().equalsIgnoreCase("fly")) {
+		else if(cmd.getName().equalsIgnoreCase("fly")) {
 			if(sender instanceof Player) {
 				Player pl = ((Player) sender).getPlayer();
 				
@@ -117,11 +107,76 @@ public class MainClass extends JavaPlugin {
 				sender.sendMessage("Il faut être un joueur.");
 			}
 		}
+		
+		//messages privés
+		else if(cmd.getName().equalsIgnoreCase("msg")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				Player player_choose;
+				String message = "";
+				boolean boucle_value = true;
+				int i = 2;
+				
+				try {
+					if(args[0] != null && args.length != 0) {
+						message = message + args[1];
+						
+						while(boucle_value) {
+							try {
+								message = message + " " + args[i];
+							}
+							catch(Exception e) {
+								boucle_value = false;
+							}
+							
+							i++;
+						}
+						
+						player_choose = Bukkit.getPlayer(args[0]);
+						player_choose.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + ChatColor.ITALIC + "Message de " + pl.getDisplayName() + " ---> " + ChatColor.RESET + message);
+						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + ChatColor.ITALIC + "Message bien envoyé à " + player_choose.getDisplayName() + ": " + ChatColor.RESET + message);
+					}
+					else {
+						pl.sendMessage(ChatColor.RED + getCommandMsgSyntaxe());
+					}
+				}
+				catch(Exception e) {
+					pl.sendMessage(ChatColor.RED + getCommandMsgSyntaxe());
+				}
+			}
+			else {
+				sender.sendMessage("Il faut être un joueur.");
+			}
+		}
+		
+		else if(cmd.getName().equalsIgnoreCase("msg-begin")) {
+			/*
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				if(args.length == 0) {
+					pl.sendMessage(ChatColor.RED + getCommandMsgBeginSyntaxe());
+				}
+    			else {
+    				ConversationSystem.convBegin(pl, Bukkit.getPlayer(args[0]));
+    			}
+			}*/
+		}
+		
 		return true;
 	}
 	
+	@SuppressWarnings("unused")
+	private String getCommandMsgBeginSyntaxe() {
+		return "Syntaxe : /msg-begin <pseudo>";
+	}
+
 	private String getCommandFlySyntaxe() {
 		return "Syntaxe : /fly <1/0/on/off>";
+	}
+	
+	private String getCommandMsgSyntaxe() {
+		return "Syntaxe : /msg <pseudo> <message>";
 	}
 
 	private String getCommandHtGiveItemsSyntaxe() {

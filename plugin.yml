@@ -9,3 +9,6 @@ commands:
    fly:
       description: CommandeFly
       usage: /fly <subcommand>
+   msg:
+      description: EnvoyerDesMessagesPv
+      usage: /msg <pseudo> <message>

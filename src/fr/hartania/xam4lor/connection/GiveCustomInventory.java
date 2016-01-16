@@ -8,14 +8,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class GiveCustomInventory {
 	public GiveCustomInventory(Player p) {
-		this.giveBoussole(p);
+		this.giveEmerald(p);
 		
 		if(p.isOp()) {
-			this.giveOpTool(p);
+			this.giveDiamond(p);
 		}
 	}
 
-	private void giveBoussole(Player p) {
+	private void giveEmerald(Player p) {
 		ItemStack boussole = new ItemStack(Material.EMERALD, 1, (byte) 0);
 		ItemMeta boussole_meta = boussole.getItemMeta();
 		
@@ -25,7 +25,7 @@ public class GiveCustomInventory {
 		p.getInventory().addItem(boussole);
 	}
 
-	public static ItemStack getBoussole() {
+	public static ItemStack getEmerald() {
 		ItemStack boussole = new ItemStack(Material.EMERALD, 1, (byte) 0);
 		ItemMeta boussole_meta = boussole.getItemMeta();
 		
@@ -36,7 +36,7 @@ public class GiveCustomInventory {
 		return boussole;
 	}
 	
-	private void giveOpTool(Player p) {
+	private void giveDiamond(Player p) {
 		ItemStack emerald = new ItemStack(Material.DIAMOND, 1, (byte) 0);
 		ItemMeta emerald_meta = emerald.getItemMeta();
 		
@@ -46,7 +46,7 @@ public class GiveCustomInventory {
 		p.getInventory().addItem(emerald);
 	}
 	
-	public static ItemStack getCommandBlock() {
+	public static ItemStack getDiamond() {
 		ItemStack emerald = new ItemStack(Material.DIAMOND, 1, (byte) 0);
 		ItemMeta emerald_meta = emerald.getItemMeta();
 		

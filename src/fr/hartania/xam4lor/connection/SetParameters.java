@@ -11,6 +11,7 @@ public class SetParameters {
 		p.setHealth(20);
 		p.setFoodLevel(21);
 		p.setExhaustion(5F);
+		p.getActivePotionEffects().clear();
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(new ItemStack[] {new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 		

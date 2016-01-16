@@ -16,6 +16,15 @@ public class DiamondGui {
 	public Inventory createInv(Player p) {
 		Inventory iv = Bukkit.getServer().createInventory(p, 54, "- Op Tools -");
 		
+		ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1);
+		ItemMeta glass_meta = glass.getItemMeta();
+		glass_meta.setDisplayName(" ");
+		glass.setItemMeta(glass_meta);
+		
+		for(int i = 0; i != 54; i++) {
+			iv.setItem(i, glass);
+		}
+		
 		ItemStack survival = new ItemStack(Material.STAINED_CLAY, 1, (byte) 14);
 		ItemMeta survival_meta = survival.getItemMeta();
 		survival_meta.setDisplayName(ChatColor.GREEN + "SURVIE");
@@ -31,18 +40,15 @@ public class DiamondGui {
 		spectator_meta.setDisplayName(ChatColor.GREEN + "SPECTATEUR");
 		spectator.setItemMeta(spectator_meta);
 		
-		ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1);
-		ItemMeta glass_meta = glass.getItemMeta();
-		glass_meta.setDisplayName(" ");
-		glass.setItemMeta(glass_meta);
+		ItemStack commands_block = new ItemStack(Material.COMMAND, 1, (byte) 4);
+		ItemMeta commands_block_meta = commands_block.getItemMeta();
+		commands_block_meta.setDisplayName(ChatColor.RED + "COMMANDS BLOCKS");
+		commands_block.setItemMeta(commands_block_meta);
 		
-		for(int i = 0; i != 9; i++) {
-			iv.setItem(i, glass);
-		}
-		
-		iv.setItem(2, survival);
-		iv.setItem(4, creatif);
-		iv.setItem(6, spectator);
+		iv.setItem(11, survival);
+		iv.setItem(13, creatif);
+		iv.setItem(15, spectator);
+		iv.setItem(22, commands_block);
 		
 		return iv;
 	}

@@ -15,12 +15,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.connection.SetParameters;
-import fr.hartania.xam4lor.games.TestCoordonates;
 import fr.hartania.xam4lor.main.MainClass;
 import fr.hartania.xam4lor.menus.DiamondGui;
 import fr.hartania.xam4lor.menus.EmeraldGui;
@@ -56,11 +54,6 @@ public class Events implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerTeleport(PlayerTeleportEvent ev) {
-		new TestCoordonates(ev);
-	}
-	
-	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent ev) {
 		new SetParameters(ev.getPlayer());
 		new GiveCustomInventory(ev.getPlayer());
@@ -75,10 +68,10 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent ev) {
-		if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getBoussole())) {
+		if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getEmerald())) {
 			new EmeraldGui(ev.getPlayer());
 		}
-		else if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getCommandBlock())) {
+		else if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getDiamond())) {
 			new DiamondGui(ev.getPlayer());
 		}
 	}
@@ -114,6 +107,7 @@ public class Events implements Listener {
 					ev.getWhoClicked().closeInventory();
 				}
 				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "- SKYWARS -")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -205, 63, -301));
 					ev.getWhoClicked().closeInventory();
 				}
 			}
@@ -131,6 +125,10 @@ public class Events implements Listener {
 				}
 				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GREEN + "SPECTATEUR")) {
 					ev.getWhoClicked().setGameMode(GameMode.SPECTATOR);
+					ev.getWhoClicked().closeInventory();
+				}
+				else if(ev.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.RED + "COMMANDS BLOCKS")) {
+					ev.getWhoClicked().teleport(new Location(Bukkit.getServer().getWorlds().get(0), -865, 6, -252));
 					ev.getWhoClicked().closeInventory();
 				}
 			}
