@@ -6,15 +6,15 @@ import java.io.FileReader;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 import fr.hartania.xam4lor.main.MainClass;
 
 public class SayServerInfos {
-	public SayServerInfos(Player pl) {
+	public SayServerInfos(CommandSender sender) {
 		String infos = this.getInfos();
 		
-		pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + infos);
+		sender.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.RESET + infos);
 	}
 	
 	private String getInfos() {
@@ -31,7 +31,6 @@ public class SayServerInfos {
 					
 					while ((line = br.readLine()) != null) {
 						infos += line;
-						infos += System.getProperty("line.separator");
 						infos += System.getProperty("line.separator");
 					}
 				}

@@ -1,5 +1,6 @@
 package fr.hartania.xam4lor.main;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -15,19 +16,33 @@ import fr.hartania.xam4lor.connection.GiveCustomInventory;
 import fr.hartania.xam4lor.events.Events;
 import fr.hartania.xam4lor.fly.FlySysteme;
 import fr.hartania.xam4lor.grades.SetGrade;
+import fr.hartania.xam4lor.infos.AddServerInfo;
 import fr.hartania.xam4lor.infos.SayServerInfos;
+import fr.hartania.xam4lor.muteSystem.GetMutedPlayersByFile;
+import fr.hartania.xam4lor.muteSystem.SetMutedPlayerInFile;
+import fr.hartania.xam4lor.muteSystem.SetUnMutedPlayerInFile;
 import fr.hartania.xam4lor.pubMessage.RandomPubMessage;
 
 public class MainClass extends JavaPlugin {
 	
 	public Logger log = Logger.getLogger("Minecraft");
 	public static World main_world = Bukkit.getServer().getWorld("world");
+	private static ArrayList<String> muteListName = new ArrayList<>();
 	
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new Events(this), this);
 		this.log.info(MainClass.getServerName() + "If this is not the correct default world, please contact the developper. World: " + Bukkit.getServer().getWorlds().get(0));
 		SetPubMessage();
+		
+		try {
+			new GetMutedPlayersByFile();
+			this.log.info(MainClass.getServerName() + "Liste des players mute bien configurée.");
+		}
+		catch(Exception e) {
+			this.log.info(MainClass.getServerName() + "Erreur lors de la configuration des joueurs mute.");
+			e.printStackTrace();
+		}
 		
 		this.log.info(MainClass.getServerName() + "Plugin launched");
 	}
@@ -232,11 +247,97 @@ public class MainClass extends JavaPlugin {
 		
 		//actualités
 		else if(cmd.getName().equalsIgnoreCase("actus")) {
+			try {
+				if(args.length == 0) {
+					sender.sendMessage(ChatColor.RED + getCommandActusSyntaxe());
+				}
+				else if(!sender.isOp()) {
+					sender.sendMessage(ChatColor.RED + MainClass.getServerName() + "Vous n'êtes pas un opérateur.");
+				}
+				else if(args[0].equals("list")) {
+					new SayServerInfos(sender);
+				}
+				else if(args[0].equals("add")) {
+					String message = "";
+					boolean condition_boucle = true;
+					int i = 1;
+					
+					try {
+						while(condition_boucle) {
+							try {
+								message += (args[i] + " ");
+								i++;
+							}
+							catch(ArrayIndexOutOfBoundsException e) {
+								condition_boucle = false;
+							}
+						}
+					}
+					catch(Exception e) {
+						sender.sendMessage(ChatColor.RED + getCommandServerInfosAddSyntaxe());
+					}
+					
+					if(message != "") {
+						new AddServerInfo(message);
+						sender.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Cette actualité a bien été rajoutée : " + ChatColor.RESET + message);
+					}
+					else {
+						sender.sendMessage(ChatColor.RED + getCommandServerInfosAddSyntaxe());
+					}
+				}
+				else {
+					sender.sendMessage(ChatColor.RED + getCommandActusSyntaxe());
+				}
+			}
+			catch(Exception e) {
+				sender.sendMessage(ChatColor.RED + getCommandActusSyntaxe());
+			}
+		}
+		
+		//mute un joueur
+		else if(cmd.getName().equalsIgnoreCase("mute")) {
 			if(sender instanceof Player) {
 				Player pl = ((Player) sender).getPlayer();
 				
-				if(pl.isOp()) {
-					new SayServerInfos(pl);
+				if(args.length == 0) {
+					pl.sendMessage(ChatColor.RED + getCommandMuteSyntaxe());
+				}
+				else if(pl.isOp()) {
+					try {
+						setMutePlayer(args[0]);
+						new SetMutedPlayerInFile(args[0]);
+						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + args[0] + " a bien été mute.");
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+					}
+				}
+				else {
+					sender.sendMessage(ChatColor.RED + MainClass.getServerName() + "Vous n'êtes pas un opérateur.");
+				}
+			}
+			else {
+				sender.sendMessage(MainClass.getServerName() + "Il faut être un joueur.");
+			}
+		}
+		
+		//unmute un joueur
+		else if(cmd.getName().equalsIgnoreCase("unmute")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				if(args.length == 0) {
+					pl.sendMessage(ChatColor.RED + getCommandUnMuteSyntaxe());
+				}
+				else if(pl.isOp()) {
+					try {
+						unmutePlayer(args[0]);
+						new SetUnMutedPlayerInFile(args[0]);
+						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + args[0] + " a bien été unmute.");
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+					}
 				}
 				else {
 					sender.sendMessage(ChatColor.RED + MainClass.getServerName() + "Vous n'êtes pas un opérateur.");
@@ -249,7 +350,7 @@ public class MainClass extends JavaPlugin {
 		
 		return true;
 	}
-	
+
 	public void SetPubMessage() {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 		
@@ -263,6 +364,22 @@ public class MainClass extends JavaPlugin {
 
 	private String getCommandFlySyntaxe() {
 		return "Syntaxe : /fly <1/0/on/off>";
+	}
+	
+	private String getCommandServerInfosAddSyntaxe() {
+		return "Syntaxe : /actus add <texte>";
+	}
+	
+	private String getCommandMuteSyntaxe() {
+		return "Syntaxe : /mute <player>";
+	}
+	
+	private String getCommandUnMuteSyntaxe() {
+		return "Syntaxe : /unmute <player>";
+	}
+	
+	private String getCommandActusSyntaxe() {
+		return "Syntaxe : /actus <list/add>";
 	}
 	
 	private String getCommandGlobalSyntaxe() {
@@ -291,5 +408,24 @@ public class MainClass extends JavaPlugin {
 	
 	public static String getServerName2() {
 		return "[Hartania Global-Message] ";
+	}
+
+	public static boolean isPlayerMute(Player pl) {
+		String pl_name = pl.getName();
+		
+		if(MainClass.muteListName.contains(pl_name)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public static void setMutePlayer(String player_name) { //ajoute un joueur mute dans la Collection<> mutePlayers
+		MainClass.muteListName.add(player_name);
+	}
+	
+	public static void unmutePlayer(String player_name) { //ajoute un joueur mute dans la Collection<> mutePlayers
+		MainClass.muteListName.remove(player_name);
 	}
 }

@@ -22,5 +22,11 @@ commands:
       description: Commande pour faire un message global (comme venant du serveur)
       usage: /global <message>
    actus:
-      description: Commande pour afficher les mises à jour et modifications pour se tenir à jour
-      usage: /actus
+      description: Commande pour afficher les mises à jour et modifications et pour en ajouter
+      usage: /actus <add/list>
+   mute:
+      description: Commande pour muter un player
+      usage: /mute <player>
+   unmute:
+      description: Commande pour unmute un player
+      usage: /unmute <player>

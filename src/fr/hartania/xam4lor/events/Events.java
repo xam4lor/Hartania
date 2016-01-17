@@ -7,12 +7,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -33,14 +36,24 @@ public class Events implements Listener {
 		this.m = m;
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onBlockPlaceEvent(final BlockPlaceEvent ev) {		
 		if(!ev.getPlayer().isOp()) {
 			ev.setCancelled(true);
 		}
 	}
 	
-	@EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onAsyncPlayerChat(AsyncPlayerChatEvent ev) {
+        Player pl = ev.getPlayer();
+        
+        if(MainClass.isPlayerMute(pl)) {
+        	ev.setCancelled(true);
+        	pl.sendMessage(ChatColor.RED + MainClass.getServerName() + "Vous êtes mute.");
+        }
+    }
+	
+    @EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent ev) {
 		if(ev.getPlayer().isOp()) {
 			ev.getPlayer().setGameMode(GameMode.CREATIVE);
@@ -57,20 +70,20 @@ public class Events implements Listener {
 		ev.getPlayer().setDisplayName(GradeSystem.getGradeColor(GradeSystem.getGrade(ev.getPlayer())) + "[" + GradeSystem.getGrade(ev.getPlayer()) + "] " + ev.getPlayer().getDisplayName() + ChatColor.RESET);
 	}
 	
-	@EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerRespawn(PlayerRespawnEvent ev) {
 		new SetParameters(ev.getPlayer());
 		new GiveCustomInventory(ev.getPlayer());
 	}
 	
-	@EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
 	public void onBlockBreakEvent(final BlockBreakEvent ev) {
 		if(!ev.getPlayer().isOp()) {
 			ev.setCancelled(true);
 		}
 	}
 	
-	@EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerDeath(PlayerDeathEvent ev) {
 		try {
 			ev.getEntity().getPlayer().sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Vous êtes mort.");
@@ -81,7 +94,7 @@ public class Events implements Listener {
 		}
 	}
 	
-	@EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent ev) {
 		if(ev.getPlayer().getItemInHand().isSimilar(GiveCustomInventory.getEmerald())) {
 			new EmeraldGui(ev.getPlayer());
@@ -91,7 +104,7 @@ public class Events implements Listener {
 		}
 	}
 	
-	@EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClick(InventoryClickEvent ev) {
 		try {
 			if (ev.getInventory().getName().equals("- Menu -")) {
@@ -153,7 +166,7 @@ public class Events implements Listener {
 		}
 	}
 	
-	@EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
 	public void onWeatherChange(WeatherChangeEvent ev) {
 		ev.setCancelled(true);
 	}
