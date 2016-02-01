@@ -1,4 +1,4 @@
-package fr.hartania.xam4lor.muteSystem;
+package fr.hartania.xam4lor.grades;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,9 +9,9 @@ import org.bukkit.Bukkit;
 import fr.hartania.xam4lor.errorSystem.OnErrorSystem;
 import fr.hartania.xam4lor.main.MainClass;
 
-public class GetMutedPlayersByFile {
-	public GetMutedPlayersByFile() {
-		File mutePlayersFile = new File("plugins/config/mutePlayers.txt");
+public class GetAdminsPlayersByFile {
+	public GetAdminsPlayersByFile() {
+		File mutePlayersFile = new File("plugins/config/administrateurs.txt");
 		
 		try {
 			if (mutePlayersFile.exists()) {
@@ -23,7 +23,7 @@ public class GetMutedPlayersByFile {
 					
 					while ((line = br.readLine()) != null) {
 						if(line != "") {
-							MainClass.setMutePlayer(line);
+							MainClass.setAdminPlayer(line);
 						}
 					}
 				}
@@ -39,18 +39,17 @@ public class GetMutedPlayersByFile {
 					}
 					
 					catch (Exception e) { 
-						e.printStackTrace();
+						e.printStackTrace(); 
 						new OnErrorSystem(e.toString());
 					}
 				}
 			}
 			else {
-				Bukkit.getLogger().warning(MainClass.getServerName() + "Impossible de trouver le fichier 'mutePlayers.txt'");
+				Bukkit.getLogger().warning(MainClass.getServerName() + "Impossible de trouver le fichier 'administrateurs.txt'");
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			new OnErrorSystem(e.toString());
 		}
 	}
 }

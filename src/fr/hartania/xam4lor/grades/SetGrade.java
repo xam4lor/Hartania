@@ -1,18 +1,15 @@
 package fr.hartania.xam4lor.grades;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import fr.hartania.xam4lor.errorSystem.OnErrorSystem;
+import fr.hartania.xam4lor.fileSystem.FileSystems;
 import fr.hartania.xam4lor.main.MainClass;
 
 public class SetGrade {
@@ -20,17 +17,21 @@ public class SetGrade {
 	public SetGrade(String playerName, String permission, Player commandExecutor) {
 		this.removeModoIfModo(playerName);
 		this.removeAdminIfAdmin(playerName);
+		MainClass.unModerateurPlayer(playerName);
+		MainClass.unAdminPlayer(playerName);
 		
 		if(permission.equals("modo")) {
+			MainClass.setModerateurPlayer(playerName);
 			this.setModo(playerName);
-			commandExecutor.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + playerName + " a bien été mis " + permission + " (veuillez relancer le serveur).");
+			commandExecutor.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + playerName + " a bien été mis " + permission + " (veuillez dire au joueur de se deco/reco).");
 		}
 		else if(permission.equals("admin")) {
+			MainClass.setAdminPlayer(playerName);
 			this.setAdmin(playerName);
-			commandExecutor.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + playerName + " a bien été mis " + permission + " (veuillez relancer le serveur).");
+			commandExecutor.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + playerName + " a bien été mis " + permission + " (veuillez dire au joueur de se deco/reco).");
 		}
 		else if(permission.equals("joueur")) {
-			commandExecutor.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + playerName + " a bien été mis " + permission + " (veuillez relancer le serveur).");
+			commandExecutor.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le joueur " + playerName + " a bien été mis " + permission + " (veuillez dire au joueur de se deco/reco).");
 		}
 		else {
 			commandExecutor.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le grade " + permission + " n'existe pas (ceci est une erreur).");
@@ -38,11 +39,11 @@ public class SetGrade {
 	}
 	
 	private void setModo(String playerName) {
-		this.ajouterLigne("plugins/config/moderateurs.txt", playerName);
+		FileSystems.ajouterLigne("plugins/config/moderateurs.txt", playerName);
 	}
 
 	private void setAdmin(String playerName) {
-		this.ajouterLigne("plugins/config/moderateurs.txt", playerName);
+		FileSystems.ajouterLigne("plugins/config/administrateurs.txt", playerName);
 	}
 	
 	private void removeModoIfModo(String playerName) {
@@ -59,7 +60,7 @@ public class SetGrade {
 					
 					while ((line = br.readLine()) != null) {
 						if(line.equals(playerName)) {
-							deleteLine("plugins/config/moderateurs.txt", lineNumber);
+							FileSystems.deleteLine("plugins/config/moderateurs.txt", lineNumber);
 						}
 						
 						lineNumber++;
@@ -68,6 +69,7 @@ public class SetGrade {
 				
 				catch (Exception e) {
 					e.printStackTrace();
+					new OnErrorSystem(e.toString());
 				} 
 				
 				finally {
@@ -86,6 +88,7 @@ public class SetGrade {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+			new OnErrorSystem(e.toString());
 		}
 		
 	}
@@ -104,7 +107,7 @@ public class SetGrade {
 					
 					while ((line = br.readLine()) != null) {
 						if(line.equals(playerName)) {
-							deleteLine("plugins/config/administrateurs.txt", lineNumber);
+							FileSystems.deleteLine("plugins/config/administrateurs.txt", lineNumber);
 						}
 						
 						lineNumber++;
@@ -113,6 +116,7 @@ public class SetGrade {
 				
 				catch (Exception e) {
 					e.printStackTrace();
+					new OnErrorSystem(e.toString());
 				} 
 				
 				finally {
@@ -121,7 +125,8 @@ public class SetGrade {
 					}
 					
 					catch (Exception e) { 
-						e.printStackTrace(); 
+						e.printStackTrace();
+						new OnErrorSystem(e.toString());
 					}
 				}
 			}
@@ -131,50 +136,7 @@ public class SetGrade {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+			new OnErrorSystem(e.toString());
 		}
 	}
-	
-	private void deleteLine(String fileName, int lineNumber) {
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-			StringBuffer sb = new StringBuffer();
-			String line;
-			int nbLinesRead = 0;
-			
-			while ((line = reader.readLine()) != null) {
-				if (nbLinesRead != lineNumber) {
-					sb.append(line + "\n");
-				}
-				nbLinesRead++;
-			}
-			reader.close();
-			
-			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-			out.write(sb.toString());
-			out.close();
-		} catch (Exception e) {}
-    }
-	
-	public void ajouterLigne(String filename, String text) {
-		BufferedWriter bufWriter = null;
-		FileWriter fileWriter = null;
-		
-		try {
-			fileWriter = new FileWriter(filename, true);
-			bufWriter = new BufferedWriter(fileWriter);
-			bufWriter.newLine();
-			bufWriter.write(text);
-			bufWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				bufWriter.close();
-				fileWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-    } 
-
 }

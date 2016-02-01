@@ -8,6 +8,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import fr.hartania.xam4lor.errorSystem.OnErrorSystem;
 import fr.hartania.xam4lor.main.MainClass;
 
 public class RandomPubMessage {
@@ -27,7 +28,8 @@ public class RandomPubMessage {
 			}
 		}
 		catch(ArrayIndexOutOfBoundsException e) {
-			Bukkit.getLogger().warning(MainClass.getServerName() + "Le tableau à la ligne 14 de la class RandomPubMessage ne peut pas être vide.");
+			e.printStackTrace();
+			new OnErrorSystem(e.toString());
 		}
 	}
 	
@@ -54,6 +56,7 @@ public class RandomPubMessage {
 				
 				catch (Exception e) {
 					e.printStackTrace();
+					new OnErrorSystem(e.toString());
 				} 
 				
 				finally {
@@ -62,7 +65,8 @@ public class RandomPubMessage {
 					}
 					
 					catch (Exception e) { 
-						e.printStackTrace(); 
+						e.printStackTrace();
+						new OnErrorSystem(e.toString());
 					}
 				}
 			}

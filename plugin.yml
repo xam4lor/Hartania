@@ -30,3 +30,21 @@ commands:
    unmute:
       description: Commande pour unmute un player
       usage: /unmute <player>
+   money:
+      description: Commande pour voir la money d'un joueur
+      usage: /money <player>
+   lookup:
+      description: Commande pour voir le status d'un joueur
+      usage: /lookup <player>
+   sound-msg:
+      description: Commande pour voir le status d'un joueur
+      usage: /sound-msg <1/0/on/off>
+   mail:
+      description: Commande pour envoyer un mail à un joueur
+      usage: /mail <player> <message>
+   clear-chat:
+      description: Commande pour clear son chat
+      usage: /clear-chat
+   return:
+      description: Commande pour retourner au spawn lors d'une mort dans un mini-jeu
+      usage: /return

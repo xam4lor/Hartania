@@ -5,33 +5,50 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import fr.hartania.xam4lor.connection.GiveCustomInventory;
+import fr.hartania.xam4lor.connection.SetParameters;
+import fr.hartania.xam4lor.errorSystem.OnErrorSystem;
 import fr.hartania.xam4lor.events.Events;
 import fr.hartania.xam4lor.fly.FlySysteme;
+import fr.hartania.xam4lor.grades.GetAdminsPlayersByFile;
+import fr.hartania.xam4lor.grades.GetModerateursPlayersByFile;
 import fr.hartania.xam4lor.grades.SetGrade;
 import fr.hartania.xam4lor.infos.AddServerInfo;
 import fr.hartania.xam4lor.infos.SayServerInfos;
+import fr.hartania.xam4lor.lookup.LookupPlayer;
+import fr.hartania.xam4lor.mails.MailSystem;
 import fr.hartania.xam4lor.muteSystem.GetMutedPlayersByFile;
 import fr.hartania.xam4lor.muteSystem.SetMutedPlayerInFile;
 import fr.hartania.xam4lor.muteSystem.SetUnMutedPlayerInFile;
 import fr.hartania.xam4lor.pubMessage.RandomPubMessage;
+import fr.hartania.xam4lor.reseau.Inet;
+import fr.hartania.xam4lor.scoreboards.DisplayScoreboard;
 
 public class MainClass extends JavaPlugin {
 	
 	public Logger log = Logger.getLogger("Minecraft");
 	public static World main_world = Bukkit.getServer().getWorld("world");
 	private static ArrayList<String> muteListName = new ArrayList<>();
+	public static ArrayList<String> moderatorsListName = new ArrayList<>();
+	public static ArrayList<String> adminsListName = new ArrayList<>();
+	public static ArrayList<String> notifOnListName = new ArrayList<>();
+	public static ArrayList<String> nbPlConnexion = new ArrayList<>();
+	public static ArrayList<String> plDeathsInSkywars = new ArrayList<>();
 	
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new Events(this), this);
+		notifOnListName.clear();
 		this.log.info(MainClass.getServerName() + "If this is not the correct default world, please contact the developper. World: " + Bukkit.getServer().getWorlds().get(0));
 		SetPubMessage();
 		
@@ -40,9 +57,50 @@ public class MainClass extends JavaPlugin {
 			this.log.info(MainClass.getServerName() + "Liste des players mute bien configurée.");
 		}
 		catch(Exception e) {
-			this.log.info(MainClass.getServerName() + "Erreur lors de la configuration des joueurs mute.");
 			e.printStackTrace();
+			new OnErrorSystem(e.toString());
 		}
+		
+		try {
+			new GetModerateursPlayersByFile();
+			
+			this.log.info(MainClass.getServerName() + "Liste des modérateurs bien configurée.");
+		}
+		catch(Exception e) {
+			this.log.info(MainClass.getServerName() + "Erreur lors de la configuration des joueurs modérateurs.");
+			e.printStackTrace();
+			new OnErrorSystem(e.toString());
+		}
+		
+		try {
+			new GetAdminsPlayersByFile();
+			
+			this.log.info(MainClass.getServerName() + "Liste des administrateurs bien configurée.");
+		}
+		catch(Exception e) {
+			this.log.info(MainClass.getServerName() + "Erreur lors de la configuration des joueurs administrateurs.");
+			e.printStackTrace();
+			new OnErrorSystem(e.toString());
+		}
+		
+		try {
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			scheduler.scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("Hartania-Plugin"), new Runnable() {
+				@Override
+				public void run() {
+					new SystemClock();
+				}
+			}, 0L, 1L); //tous les 1 ticks (1200 tick = 1 min)
+			
+			this.log.info(MainClass.getServerName() + "Clock lancée.");
+		}
+		catch(Exception e) {
+			this.log.info(MainClass.getServerName() + "Erreur lors de la clock.");
+			e.printStackTrace();
+			new OnErrorSystem(e.toString());
+		}
+		
+		new Inet();
 		
 		this.log.info(MainClass.getServerName() + "Plugin launched");
 	}
@@ -151,6 +209,7 @@ public class MainClass extends JavaPlugin {
 	    				}
 	    				
 	    				if(gradeCorrect) {
+	    					Bukkit.getPlayer(args[0]).sendMessage(ChatColor.RED + getServerName() + "Vous avez été changé de grade. Veuillez vous déconnecter puis vous reconnecter, merci.");
 	    					new SetGrade(args[0], args[1], pl);
 	    				}
 	    				else {
@@ -194,6 +253,12 @@ public class MainClass extends JavaPlugin {
 						player_choose = Bukkit.getPlayer(args[0]);
 						player_choose.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + ChatColor.ITALIC + "Message de " + pl.getDisplayName() + " ---> " + ChatColor.RESET + message);
 						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + ChatColor.ITALIC + "Message bien envoyé à " + player_choose.getDisplayName() + ": " + ChatColor.RESET + message);
+						
+			        	for(Player pp : Bukkit.getOnlinePlayers()) {
+			        		if(MainClass.isNotifMsgOn(pp) && pp != sender) {
+			        			pp.playSound(pp.getPlayer().getLocation(), Sound.NOTE_PIANO, 200, 1);
+			        		}
+			        	}
 					}
 					else {
 						pl.sendMessage(ChatColor.RED + getCommandMsgSyntaxe());
@@ -231,6 +296,12 @@ public class MainClass extends JavaPlugin {
 						}
 						
 						Bukkit.getServer().broadcastMessage(ChatColor.RED + MainClass.getServerName2() + ChatColor.GREEN + message);
+						
+			        	for(Player pp : Bukkit.getOnlinePlayers()) {
+			        		if(MainClass.isNotifMsgOn(pp) && pp != sender) {
+			        			pp.playSound(pp.getPlayer().getLocation(), Sound.NOTE_PIANO, 200, 1);
+			        		}
+			        	}
 					}
 					else {
 						sender.sendMessage(ChatColor.RED + getCommandGlobalSyntaxe());
@@ -348,6 +419,192 @@ public class MainClass extends JavaPlugin {
 			}
 		}
 		
+		//monnaie d'un joueur
+		else if(cmd.getName().equalsIgnoreCase("money")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				if(args.length == 0) {
+					pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Vous avez " + ChatColor.BOLD + Bukkit.getServer().getScoreboardManager().getMainScoreboard().getObjective("Money").getScore(pl.getName()).getScore() + ChatColor.RESET + ChatColor.GREEN + " de monnaie.");
+				}
+				else if(pl.isOp()) {
+					try {
+						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + Bukkit.getServer().getPlayer(args[0]).getName() + " a " + ChatColor.BOLD + Bukkit.getServer().getScoreboardManager().getMainScoreboard().getObjective("Money").getScore(Bukkit.getServer().getPlayer(args[0]).getName()).getScore() + ChatColor.RESET + ChatColor.GREEN + " de monnaie.");
+					}
+					catch(Exception e) {
+						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + args[0] + " n'est pas en ligne.");
+					}
+				}
+				else {
+					pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Vous avez " + ChatColor.BOLD + Bukkit.getServer().getScoreboardManager().getMainScoreboard().getObjective("Money").getScore(pl.getName()).getScore() + ChatColor.RESET + ChatColor.GREEN + " de monnaie " + ChatColor.RED + "(il faut être un opérateur pour voir la monnaie d'un joueur).");
+				}
+			}
+			else {
+				sender.sendMessage(MainClass.getServerName() + "Il faut être un joueur.");
+			}
+		}
+		
+		//lookup un joueur
+		else if(cmd.getName().equalsIgnoreCase("lookup")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				if(!pl.isOp()) {
+					pl.sendMessage(ChatColor.RED + MainClass.getServerName() + "Vous n'êtes pas un opérateur.");
+				}
+				else if(args.length == 0) {
+					pl.sendMessage(ChatColor.RED + this.getCommandLookupSyntaxe());
+				}
+				else {
+					try {
+						boolean isPlOnline = false;
+						String playerToLook = args[0];
+						
+						for(Player pp : Bukkit.getOnlinePlayers()) {
+							if(pp.getName().equals(playerToLook)) {
+								isPlOnline = true;
+							}
+						}
+						
+						if(!isPlOnline) {
+							pl.sendMessage(ChatColor.RED + MainClass.getServerName() + playerToLook + " n'est pas en ligne.");
+						}
+						else {
+							new LookupPlayer(pl, Bukkit.getPlayer(playerToLook));
+						}
+					}
+					catch(Exception e) {
+						pl.sendMessage(ChatColor.RED + this.getCommandLookupSyntaxe());
+					}
+				}
+			}
+			else {
+				sender.sendMessage(MainClass.getServerName() + "Il faut être un joueur.");
+			}
+		}
+		
+		//lookup un joueur
+		else if(cmd.getName().equalsIgnoreCase("sound-msg")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				if(args.length == 0) {
+					pl.sendMessage(ChatColor.RED + this.getCommandSoundMsgSyntaxe());
+				}
+				else if(args[0].equals("1") || args[0].equals("0") || args[0].equals("on") || args[0].equals("off")) {
+					if(args[0].equals("1") || args[0].equals("on")) {
+						notifOnListName.add(pl.getName());
+						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le son à chaque message est désormais sur " + ChatColor.BOLD + "on.");
+					}
+					else {
+						notifOnListName.remove(pl.getName());
+						pl.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le son à chaque message est désormais sur " + ChatColor.BOLD + "off.");
+					}
+				}
+				else {
+					pl.sendMessage(ChatColor.RED + this.getCommandSoundMsgSyntaxe());
+				}
+			}
+			else {
+				sender.sendMessage(MainClass.getServerName() + "Il faut être un joueur.");
+			}
+		}
+		
+		//lookup un joueur
+		else if(cmd.getName().equalsIgnoreCase("clear-chat")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				for (int i = 0; i < 100; i++) {
+					pl.sendMessage(" ");
+				}
+			}
+			else {
+				if(args.length == 0) {
+					sender.sendMessage(ChatColor.RED + this.getCommandChatCmdBlockSyntaxe());
+				}
+				else {
+					try {
+						Player pl = Bukkit.getPlayer(args[0]);
+						sender.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Le chat du joueur " + pl.getName() + " a bien été clear.");
+						for (int i = 0; i < 100; i++) {
+							pl.sendMessage(" ");
+						}
+					}
+					catch(Exception e) {
+						sender.sendMessage(ChatColor.RED + MainClass.getServerName() + args[0] + " n'est pas en ligne.");
+					}
+				}
+			}
+		}
+		
+		//mails
+		else if(cmd.getName().equalsIgnoreCase("mail")) {
+			try {
+				if(args.length == 0) {
+					sender.sendMessage(ChatColor.RED + getCommandMailSyntaxe());
+				}
+				else if(args[0] != null && args[1] != null) {
+					String message = "";
+					boolean condition_boucle = true;
+					int i = 1;
+					String playerToSend = args[0];
+					
+					try {
+						while(condition_boucle) {
+							try {
+								message += (args[i] + " ");
+								i++;
+							}
+							catch(ArrayIndexOutOfBoundsException e) {
+								condition_boucle = false;
+							}
+						}
+					}
+					catch(Exception e) {
+						sender.sendMessage(ChatColor.RED + getCommandMailSyntaxe());
+					}
+					
+					if(message != "") {
+						try {
+							MailSystem.sendMail(playerToSend, message,sender.getName());
+							sender.sendMessage(ChatColor.RED + MainClass.getServerName() + ChatColor.GREEN + "Mail bien envoyé à " + playerToSend  + " : " + ChatColor.RESET + message);
+						}
+						catch(Exception e) {
+							sender.sendMessage(ChatColor.RED + MainClass.getServerName() + "Erreur dans l'envoi du mail");
+						}
+					}
+					else {
+						sender.sendMessage(ChatColor.RED + getCommandMailSyntaxe());
+					}
+				}
+				else {
+					sender.sendMessage(ChatColor.RED + getCommandMailSyntaxe());
+				}
+			}
+			catch(Exception e) {
+				sender.sendMessage(ChatColor.RED + getCommandMailSyntaxe());
+			}
+		}
+		
+		//lookup un joueur
+		else if(cmd.getName().equalsIgnoreCase("return")) {
+			if(sender instanceof Player) {
+				Player pl = ((Player) sender).getPlayer();
+				
+				if(MainClass.plDeathsInSkywars.contains(pl.getName())) {
+					new SetParameters(pl);
+					new GiveCustomInventory(pl);
+					
+					if(pl.isOp()) {
+						pl.setGameMode(GameMode.CREATIVE);
+					}
+					
+					MainClass.plDeathsInSkywars.remove(pl.getName());
+				}
+			}
+		}
+		
 		return true;
 	}
 
@@ -366,6 +623,10 @@ public class MainClass extends JavaPlugin {
 		return "Syntaxe : /fly <1/0/on/off>";
 	}
 	
+	private String getCommandSoundMsgSyntaxe() {
+		return "Syntaxe : /sound-msg <1/0/on/off>";
+	}
+	
 	private String getCommandServerInfosAddSyntaxe() {
 		return "Syntaxe : /actus add <texte>";
 	}
@@ -376,6 +637,14 @@ public class MainClass extends JavaPlugin {
 	
 	private String getCommandUnMuteSyntaxe() {
 		return "Syntaxe : /unmute <player>";
+	}
+	
+	private String getCommandMailSyntaxe() {
+		return "Syntaxe : /mail <player> <message>";
+	}
+	
+	private String getCommandLookupSyntaxe() {
+		return "Syntaxe : /lookup <player>";
 	}
 	
 	private String getCommandActusSyntaxe() {
@@ -392,6 +661,9 @@ public class MainClass extends JavaPlugin {
 	
 	private String getCommandMsgSyntaxe() {
 		return "Syntaxe : /msg <pseudo> <message> ou /m <pseudo> <message>";
+	}
+	private String getCommandChatCmdBlockSyntaxe() {
+		return "Syntaxe : /clear-chat <player>";
 	}
 
 	private String getCommandHtGiveItemsSyntaxe() {
@@ -427,5 +699,123 @@ public class MainClass extends JavaPlugin {
 	
 	public static void unmutePlayer(String player_name) { //ajoute un joueur mute dans la Collection<> mutePlayers
 		MainClass.muteListName.remove(player_name);
+	}
+	
+	public static boolean isPlayerModerateur(Player pl) {
+		String pl_name = pl.getName();
+		
+		if(MainClass.moderatorsListName.contains(pl_name)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public static void setModerateurPlayer(String player_name) { //ajoute un joueur dans la Collection<> moderatorsListName
+		MainClass.moderatorsListName.add(player_name);
+	}
+	
+	public static void unModerateurPlayer(String player_name) { //ajoute un joueur dans la Collection<> moderatorsListName
+		MainClass.adminsListName.remove(player_name);
+	}
+	
+	public static boolean isPlayerAdmin(Player pl) {
+		String pl_name = pl.getName();
+		
+		if(MainClass.adminsListName.contains(pl_name)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public static void setAdminPlayer(String player_name) { //ajoute un joueur dans la Collection<> adminsListName
+		MainClass.adminsListName.add(player_name);
+	}
+	
+	public static void unAdminPlayer(String player_name) { //ajoute un joueur dans la Collection<> adminsListName
+		MainClass.adminsListName.remove(player_name);
+	}
+	
+	public static String getPlayerGrade(Player pl) {
+		if(MainClass.isPlayerAdmin(pl)) {
+			return "administrateur";
+		}
+		else if(MainClass.isPlayerModerateur(pl)) {
+			return "modérateur";
+		}
+		else {
+			return "joueur";
+		}
+	}
+	
+	public static int getPlayerMoney(Player pl) {
+		return Bukkit.getServer().getScoreboardManager().getMainScoreboard().getObjective("Money").getScore(pl.getName()).getScore();
+	}
+	
+	public static void addPlayerMoney(Player pl, int money) {
+		Bukkit.getServer().getScoreboardManager().getMainScoreboard().getObjective("Money").getScore(pl.getName()).setScore(Bukkit.getServer().getScoreboardManager().getMainScoreboard().getObjective("Money").getScore(pl.getName()).getScore() + money);
+	}
+	
+	public static int getPlayerKills(Player pl) {
+		return Bukkit.getServer().getScoreboardManager().getMainScoreboard().getObjective("Kill").getScore(pl.getName()).getScore();
+	}
+
+	public static void updateScoreboardTick(final Player pl) {
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		scheduler.scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("Hartania-Plugin"), new Runnable() {
+			@Override
+			public void run() {
+				DisplayScoreboard.updateScoreboard(pl);
+			}
+		}, 0L, 30L); //tous les 10 ticks (1200 tick = 1 min)
+		
+	}
+
+	public static boolean isNotifMsgOn(Player pl) {
+		if(notifOnListName.contains(pl.getName())) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	// a_min doit être la coordonnée plus petite et a_base2 la plus grande (de chaque côté)
+	public static boolean isEnterCoords(Player pl, int x_min, int y_min, int z_min, int x_max, int y_max, int z_max) {
+		if(
+				((int) pl.getLocation().getX() >= x_min) 
+				&& ((int) pl.getLocation().getY() >= y_min) 
+				&& ((int) pl.getLocation().getZ() >= z_min) 
+				&& ((int) pl.getLocation().getX() <= x_max) 
+				&& ((int) pl.getLocation().getY() <= y_max) 
+				&& ((int) pl.getLocation().getZ() <= z_max)
+			)
+		{
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	// a_min doit être la coordonnée plus petite et a_base2 la plus grande (de chaque côté)
+	public static boolean isEnterCoords(Entity e, int x_min, int y_min, int z_min, int x_max, int y_max, int z_max) {
+		if(
+				((int) e.getLocation().getX() >= x_min) 
+				&& ((int) e.getLocation().getY() >= y_min) 
+				&& ((int) e.getLocation().getZ() >= z_min) 
+				&& ((int) e.getLocation().getX() <= x_max) 
+				&& ((int) e.getLocation().getY() <= y_max) 
+				&& ((int) e.getLocation().getZ() <= z_max)
+			)
+		{
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }

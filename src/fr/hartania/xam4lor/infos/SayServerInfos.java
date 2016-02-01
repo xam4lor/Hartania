@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import fr.hartania.xam4lor.errorSystem.OnErrorSystem;
 import fr.hartania.xam4lor.main.MainClass;
 
 public class SayServerInfos {
@@ -37,6 +38,7 @@ public class SayServerInfos {
 				
 				catch (Exception e) {
 					e.printStackTrace();
+					new OnErrorSystem(e.toString());
 				} 
 				
 				finally {
@@ -55,6 +57,7 @@ public class SayServerInfos {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+			new OnErrorSystem(e.toString());
 		}
 		
 		return infos;

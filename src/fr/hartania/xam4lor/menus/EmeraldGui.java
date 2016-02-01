@@ -35,7 +35,6 @@ public class EmeraldGui {
 		
 		iv.setItem(13, game1);
 		
-		//FAIRE L'EVENT
 		ItemStack musee = new ItemStack(Material.ARMOR_STAND, 1);
 		ItemMeta musee_meta = musee.getItemMeta();
 		musee_meta.setDisplayName(ChatColor.BLUE + "- MUSEE ARMORSTAND -");
@@ -70,10 +69,17 @@ public class EmeraldGui {
 		skywars.setItemMeta(skywars_meta);
 		
 		iv.setItem(24, skywars);
+		
+		ItemStack gadget = new ItemStack(Material.NETHER_STAR, 1);
+		ItemMeta gadget_meta = gadget.getItemMeta();
+		gadget_meta.setDisplayName(ChatColor.BLUE + "- GADGETS -");
+		gadget.setItemMeta(gadget_meta);
+		
+		iv.setItem(40, gadget);
 		//-------------------------------
 		
 		for(int i = 0; i != 54; i++) {
-			if(i != 4 && i != 11 && i != 13 && i != 15 && i != 20 && i != 22 && i != 24) {
+			if(i != 4 && i != 11 && i != 13 && i != 15 && i != 20 && i != 22 && i != 24 && i != 40) {
 				iv.setItem(i, glass);
 			}
 		}
